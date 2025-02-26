@@ -2,21 +2,24 @@
 
 This project demonstrates how to use Rust and WASM to serialize JSON data into RKYV and deserialize it back into JSON. The goal is to provide an efficient serialization format for contracts while maintaining interoperability with non-Rust clients.
 
-## Compiling the WASM module
+## Compiling to WASM
 
-To compile the Rust code into a WASM module:
+To compile the Rust code into a WASM package:
 ```sh
-cargo build --target wasm32-unknown-unknown --release
+wasm-pack build --target nodejs --release
 ```
 
-The WASM binary can be found at:
+The WASM binary and JS entrypoint can be found at:
 ```
-target/wasm32-unknown-unknown/release/data_driver_demo.wasm
+./pkg/data_driver_demo_bg.wasm
+./pkg/data_driver_demo.js
 ```
+
+For other targets, see: [wasm-pack targets](https://rustwasm.github.io/wasm-pack/book/commands/build.html#target)
 
 ## Running the JavaScript client
 
-For testing purposes there's a client script available that interacts with the compiled WASM module, converting JSON to RKYV and back.
+A test client script is available to interact with the compiled WASM package, converting JSON to RKYV and back.
 
 ### Install dependencies
 
@@ -26,7 +29,7 @@ npm install
 
 ### Run client
 
-Make sure the WASM module is compiled and available in the right directory. To run the client:
+Make sure the WASM package is compiled and available in the right directory. To run the client:
 ```
 npm run execute
 ```
