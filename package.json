@@ -1,0 +1,13 @@
+{
+  "name": "contract-drivers-demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "client.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "execute": "node client.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
