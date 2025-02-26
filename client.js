@@ -1,7 +1,7 @@
 import fs from 'fs';
 
 async function main() {
-    const wasmBuffer = await fs.readFileSync('./target/wasm32-unknown-unknown/release/contract_drivers_demo.wasm');
+    const wasmBuffer = await fs.readFileSync('./target/wasm32-unknown-unknown/release/data_driver_demo.wasm');
     const wasmModule = await WebAssembly.instantiate(wasmBuffer);
     const { instance } = wasmModule;
     const { alloc, dealloc, get_schema, get_schema_len, json_to_rkyv, rkyv_to_json, memory } = instance.exports;

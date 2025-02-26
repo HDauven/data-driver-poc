@@ -1,4 +1,4 @@
-# Contract Driver Proof of concept
+# Data Driver Proof of concept
 
 This project demonstrates how to use Rust and WASM to serialize JSON data into RKYV and deserialize it back into JSON. The goal is to provide an efficient serialization format for contracts while maintaining interoperability with non-Rust clients.
 
@@ -11,7 +11,7 @@ cargo build --target wasm32-unknown-unknown --release
 
 The WASM binary can be found at:
 ```
-target/wasm32-unknown-unknown/release/contract_drivers_demo.wasm
+target/wasm32-unknown-unknown/release/data_driver_demo.wasm
 ```
 
 ## Running the JavaScript client
