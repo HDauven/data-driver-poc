@@ -6,8 +6,15 @@ async function main() {
 
     // Example JSON input
     const jsonInput = JSON.stringify({
-        recipient: "0x12345",
-        amount: 1000,
+        "recipient": "0x12345",
+        "amount": 1000,
+        withdraw_event : {
+            "sender": "a22427226377cc867d51ad3f130af08ad13451de7160efa2b23076fd782de967",
+            "receiver": {
+                "Moonlight": "24zKBvRuJK3mjT8o3p4zuh1c1cHLRcSQ81QQgxCUozw3U1HukJWWX51R37fMi4C6Qac7hVoruG56fDyqdkmeopdpKowQ9APTpS94vgoZge8X6Bpuqm1dpy8wHaaRSZz1z5AN"
+            },
+            "value": "10644393278569127094"
+        }
     });
 
     console.log("JSON Input:", jsonInput);

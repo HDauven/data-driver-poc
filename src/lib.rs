@@ -4,7 +4,6 @@ extern crate alloc;
 use alloc::format;
 use alloc::string::{String, ToString};
 use alloc::vec::Vec;
-use core::panic::PanicInfo;
 use rkyv::{Archive, Deserialize, Serialize};
 use serde::{Deserialize as SerdeDeserialize, Serialize as SerdeSerialize};
 use wasm_bindgen::prelude::*;
@@ -13,21 +12,6 @@ use wasm_bindgen::prelude::*;
 #[global_allocator]
 static ALLOC: dlmalloc::GlobalDlmalloc = dlmalloc::GlobalDlmalloc;
 
-/// Handles panics by loggin to the JS console and aborting execution
-#[panic_handler]
-fn panic_handler(info: &PanicInfo) -> ! {
-    let mut message = "Unknown panic";
-
-    if let Some(location) = info.location() {
-        message = "Panic occurred at ";
-        console_log(&format!("{}:{}:{}", message, location.file(), location.line()));
-    }
-
-    console_log("A panic occurred in WebAssembly!");
-
-    core::arch::wasm32::unreachable()
-}
-
 /// Sends logs to the JS console
 #[wasm_bindgen]
 extern "C" {
@@ -35,16 +19,12 @@ extern "C" {
     fn log(s: &str);
 }
 
-/// Logs panic messages from Rust to the JS console
-fn console_log(message: &str) {
-    log(message);
-}
-
 /// Contract data that we will ser/deser from JSON <-> RKYV
 #[derive(Archive, Serialize, Deserialize, SerdeSerialize, SerdeDeserialize)]
 pub struct ContractData {
     recipient: String,
     amount: u64,
+    withdraw_event: dusk_core::transfer::WithdrawEvent,
 }
 
 /// JSON schema definition for contract data

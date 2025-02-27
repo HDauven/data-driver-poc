@@ -9,6 +9,7 @@ rkyv = { version = "0.7", default-features = false, features = ["size_32","alloc
 serde = { version = "1.0", default-features = false, features = ["derive"] }
 serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
 wasm-bindgen = { version = "0.2", default-features = false }
+dusk-core = { version = "1.1.0", default-features = false, features = ["serde"]}
 
 [lib]
 crate-type = ["cdylib"]
