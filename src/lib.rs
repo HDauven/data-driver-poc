@@ -1,13 +1,53 @@
+#![no_std]
+
+extern crate alloc;
+use alloc::format;
+use alloc::string::{String, ToString};
+use alloc::vec::Vec;
+use core::panic::PanicInfo;
 use rkyv::{Archive, Deserialize, Serialize};
-use serde::{Serialize as SerdeSerialize, Deserialize as SerdeDeserialize};
+use serde::{Deserialize as SerdeDeserialize, Serialize as SerdeSerialize};
 use wasm_bindgen::prelude::*;
 
-#[derive(Archive, Serialize, Deserialize, Debug, SerdeSerialize, SerdeDeserialize)]
+/// Set dlmalloc as the global allocator for heap allocs
+#[global_allocator]
+static ALLOC: dlmalloc::GlobalDlmalloc = dlmalloc::GlobalDlmalloc;
+
+/// Handles panics by loggin to the JS console and aborting execution
+#[panic_handler]
+fn panic_handler(info: &PanicInfo) -> ! {
+    let mut message = "Unknown panic";
+
+    if let Some(location) = info.location() {
+        message = "Panic occurred at ";
+        console_log(&format!("{}:{}:{}", message, location.file(), location.line()));
+    }
+
+    console_log("A panic occurred in WebAssembly!");
+
+    core::arch::wasm32::unreachable()
+}
+
+/// Sends logs to the JS console
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen(js_namespace = console)]
+    fn log(s: &str);
+}
+
+/// Logs panic messages from Rust to the JS console
+fn console_log(message: &str) {
+    log(message);
+}
+
+/// Contract data that we will ser/deser from JSON <-> RKYV
+#[derive(Archive, Serialize, Deserialize, SerdeSerialize, SerdeDeserialize)]
 pub struct ContractData {
     recipient: String,
     amount: u64,
 }
 
+/// JSON schema definition for contract data
 const SCHEMA: &str = r#"
 {
     "type": "object",
@@ -19,11 +59,13 @@ const SCHEMA: &str = r#"
 }
 "#;
 
+/// Returns the JSON schema of the contract
 #[wasm_bindgen]
 pub fn get_schema() -> String {
-    SCHEMA.into()
+    SCHEMA.to_string()
 }
 
+/// Converts JSON input into RKYV
 #[wasm_bindgen]
 pub fn convert_json_to_rkyv(json_input: &str) -> Result<Vec<u8>, JsValue> {
     let parsed: ContractData = serde_json::from_str(json_input)
@@ -35,6 +77,7 @@ pub fn convert_json_to_rkyv(json_input: &str) -> Result<Vec<u8>, JsValue> {
     Ok(serialized.to_vec())
 }
 
+// Deserializes RKYV payload back into JSON
 #[wasm_bindgen]
 pub fn process_rkyv_payload(rkyv_payload: &[u8]) -> Result<String, JsValue> {
     let archived = unsafe { rkyv::archived_root::<ContractData>(rkyv_payload) };
